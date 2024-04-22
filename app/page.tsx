@@ -1,113 +1,170 @@
-import Image from "next/image";
-
+"use client";
+import React from "react";
+import products from "@/data/products.json";
+import { Product, RootState } from "@/utils/types";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart } from "@/features/cartSlice";
 export default function Home() {
+  const dispatch = useDispatch();
+  const cart = useSelector((state: RootState) => state.cart.cart);
+  const handleButtonClicked = (product: Product) => {
+    // We want to toggle this
+    const isProductAlreadyInTheCart = cart.find(
+      (cartField: Product) => cartField.id === product.id
+    );
+    if (isProductAlreadyInTheCart) {
+      // If the product is already in the cart, we want to remove it
+      dispatch(removeFromCart(product.id));
+    } else {
+      // else, add the product
+      dispatch(addToCart(product));
+    }
+  };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div>
+      <section className="text-gray-600 body-font">
+        <div className="container px-5 py-12 mx-auto">
+          <div className="flex flex-wrap w-full mb-10">
+            <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
+              <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
+                Explore Mobiles
+              </h1>
+              <div className="h-1 w-20 bg-indigo-500 rounded"></div>
+            </div>
+          </div>
+          <div className="flex flex-wrap -m-4">
+            {products.mobile.map((mobile: Product) => (
+              <div key={mobile.id} className="xl:w-1/4 md:w-1/2 p-4">
+                <div className="bg-gray-100 p-6 rounded-lg">
+                  <img
+                    className="h-40 rounded w-full object-contain object-center mb-6"
+                    src={mobile.image}
+                    alt="content"
+                  />
+                  <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
+                    {mobile.company}
+                  </h3>
+                  <h2 className="text-lg text-gray-900 font-medium title-font ">
+                    {mobile.name}
+                  </h2>
+                  <p className="leading-relaxed text-base">
+                    ${mobile.price} {mobile.weight}gm
+                  </p>
+                  <p className="leading-relaxed text-base mb-2">
+                    Dimensions:{mobile.dimensions.length}L{" "}
+                    {mobile.dimensions.width}W {mobile.dimensions.height}H
+                  </p>
+                  <button
+                    type="button"
+                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-full py-2 me-2 mb-1 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                    onClick={() => {
+                      handleButtonClicked(mobile);
+                    }}
+                  >
+                    {cart.find((product: Product) => product.id === mobile.id)
+                      ? "Remove From Cart"
+                      : "Add To Cart"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <div className="container px-5 py-12 mx-auto">
+          <div className="flex flex-wrap w-full mb-10">
+            <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
+              <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
+                Explore ACs
+              </h1>
+              <div className="h-1 w-20 bg-indigo-500 rounded"></div>
+            </div>
+          </div>
+          <div className="flex flex-wrap -m-4">
+            {products.AC.map((ac: Product) => (
+              <div key={ac.id} className="xl:w-1/4 md:w-1/2 p-4">
+                <div className="bg-gray-100 p-6 rounded-lg">
+                  <img
+                    className="h-40 rounded w-full object-contain object-center mb-6"
+                    src={ac.image}
+                    alt="content"
+                  />
+                  <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
+                    {ac.company}
+                  </h3>
+                  <h2 className="text-lg text-gray-900 font-medium title-font ">
+                    {ac.name}
+                  </h2>
+                  <p className="leading-relaxed text-base">
+                    ${ac.price} {ac.weight}gm
+                  </p>
+                  <p className="leading-relaxed text-base mb-2">
+                    Dimensions:{ac.dimensions.length}L {ac.dimensions.width}W{" "}
+                    {ac.dimensions.height}H
+                  </p>
+                  <button
+                    type="button"
+                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-full py-2 me-2 mb-1 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                    onClick={() => {
+                      handleButtonClicked(ac);
+                    }}
+                  >
+                    {cart.find((product: Product) => product.id === ac.id)
+                      ? "Remove From Cart"
+                      : "Add To Cart"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="container px-5 py-12 mx-auto">
+          <div className="flex flex-wrap w-full mb-10">
+            <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
+              <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
+                Explore Laptops
+              </h1>
+              <div className="h-1 w-20 bg-indigo-500 rounded"></div>
+            </div>
+          </div>
+          <div className="flex flex-wrap -m-4">
+            {products.laptop.map((laptop: Product) => (
+              <div key={laptop.id} className="xl:w-1/4 md:w-1/2 p-4">
+                <div className="bg-gray-100 p-6 rounded-lg">
+                  <img
+                    className="h-40 rounded w-full object-contain object-center mb-6"
+                    src={laptop.image}
+                    alt="content"
+                  />
+                  <h3 className="tracking-widest text-indigo-500 text-xs font-medium title-font">
+                    {laptop.company}
+                  </h3>
+                  <h2 className="text-lg text-gray-900 font-medium title-font ">
+                    {laptop.name}
+                  </h2>
+                  <p className="leading-relaxed text-base">
+                    ${laptop.price} {laptop.weight}gm
+                  </p>
+                  <p className="leading-relaxed text-base mb-2">
+                    Dimensions:{laptop.dimensions.length}L{" "}
+                    {laptop.dimensions.width}W {laptop.dimensions.height}H
+                  </p>
+                  <button
+                    type="button"
+                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-full py-2 me-2 mb-1 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                    onClick={() => {
+                      handleButtonClicked(laptop);
+                    }}
+                  >
+                    {cart.find((product: Product) => product.id === laptop.id)
+                      ? "Remove From Cart"
+                      : "Add To Cart"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
